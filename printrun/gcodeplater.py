@@ -102,7 +102,7 @@ class GcodePlaterPanel(PlaterPanel):
                                            perspective = perspective)
         else:
             message = "3D visualisation failed to open.\n2D visualisation is unfortunately not yet implemented.\nClick 'OK' to exit."
-            answer = wx.MessageBox(message, "GCode Plater", wx.OK, self)
+            answer = wx.MessageBox(message, _("G-Code Plater"), wx.OK, self)
             if answer == wx.OK:
                 self.DestroyLater()
             return

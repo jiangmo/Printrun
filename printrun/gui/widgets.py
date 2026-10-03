@@ -51,8 +51,8 @@ def get_space(key: str) -> int:
     try:
         return spacing_values[key]
     except KeyError:
-        logging.warning("get_space() cannot return spacing value, "
-                        "will return 0 instead. No entry: %s" % key)
+        logging.warning(_("get_space() cannot return spacing value, "
+                        "will return 0 instead. No entry: %s") % key)
         return 0
 
 
@@ -61,7 +61,7 @@ class MacroEditor(wx.Dialog):
 
     def __init__(self, macro_name, definition, callback, gcode = False):
         self.indent_chars = "  "
-        title = "%s" if gcode else "Macro %s"
+        title = "%s" if gcode else _("Macro %s")
         self.gcode = gcode
         self.fr_settings = (False, False, True, '')
 
@@ -134,7 +134,7 @@ class MacroEditor(wx.Dialog):
 
     def ShowMessage(self, event, message):
         dlg = wx.MessageDialog(self, message,
-                               "Info!", wx.OK | wx.ICON_INFORMATION)
+                               _("Info!"), wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
 

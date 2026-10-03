@@ -142,7 +142,7 @@ class DirSetting(wxSetting):
         self.text_ctrl = wx.TextCtrl(parent, -1, str(self.value))
 
         # Create the browse-button control
-        button = wx.Button(parent, -1, "Browse")
+        button = wx.Button(parent, -1, _("Browse"))
         button.Bind(wx.EVT_BUTTON, self.on_browse)
 
         self.widget = wx.BoxSizer(wx.HORIZONTAL)
@@ -204,6 +204,16 @@ class ComboSetting(wxSetting):
         super().__init__(name, default, label, help, group)
         self.choices = choices
         self.size = size
+
+    def _set_value(self, value):
+        # Older Printrun releases stored English UI choices in .pronsolerc.
+        # Translate just these choices; never alter ports, commands or profiles.
+        if self.name in ('uimode', 'controlsmode', 'mainviz'):
+            translate_choice = _
+            value = translate_choice(value)
+        wxSetting._set_value(self, value)
+
+    value = property(wxSetting._get_value, _set_value)
 
     def get_specific_widget(self, parent):
         readonly = isinstance(self.choices, tuple)

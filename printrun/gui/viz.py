@@ -59,7 +59,7 @@ class VizPane(wx.BoxSizer):
     def __init__(self, root, parentpanel = None):
         super(VizPane, self).__init__(wx.VERTICAL)
         if not parentpanel: parentpanel = root.panel
-        if root.settings.mainviz == "None":
+        if root.settings.mainviz == _("None"):
             root.gviz = NoViz()
             root.gwindow = NoVizWindow()
             return

@@ -28,13 +28,7 @@ if __name__ == '__main__':
 
     os.environ['GDK_BACKEND'] = 'x11'
 
-    usage = "Usage:\n"+\
-            "  plater [OPTION]\n"+\
-            "  plater FILES\n\n"+\
-            "Options:\n"+\
-            "  -V, --version\t\t\tPrint program's version number and exit\n"+\
-            "  -h, --help\t\t\tPrint this help message and exit\n" \
-            "  --no-gl\t\t\tUse 2D implementation, that seems unusable"
+    usage = _("Usage:\n  plater [OPTION]\n  plater FILES\n\nOptions:\n  -V, --version\t\t\tPrint program's version number and exit\n  -h, --help\t\t\tPrint this help message and exit\n  --no-gl\t\t\tUse 2D implementation, that seems unusable")
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hV", ["help", "version", 'no-gl'])
@@ -51,6 +45,8 @@ if __name__ == '__main__':
             sys.exit(0)
 
     app = wx.App(False)
+    from printrun.utils import init_wx_locale
+    app.locale = init_wx_locale()
     main = StlPlater(filenames = sys.argv[1:])
     main.Show()
     app.MainLoop()

@@ -205,6 +205,10 @@ class TestConnect(unittest.TestCase):
 
     def test_bad_ports(self):
         """Test that an error is logged if connection fails"""
+        # Exercise the error path deterministically, without relying on the
+        # runner's network/firewall to reject a real external IP address.
+        self.enterContext(mock.patch("printrun.device.Device.connect",
+                                    side_effect=printcore.device.DeviceError("Connection failed")))
         for port in ("/mocked/port", "1.2.3.4:56"):
             with self.subTest(port=port):
                 with self.assertLogs(level="ERROR"):
@@ -235,7 +239,7 @@ class TestConnect(unittest.TestCase):
 
     def test_handler_on_error(self):
         """Test that the `error` event and callback are triggered"""
-        err_msg = "Not connected to printer."
+        err_msg = _("Not connected to printer.")
         mocked_cb = mock_callback(self, self.core, "errorcb")
         mocked_handler = add_mocked_handler(self.core)
         self.core.send_now("Random Command")

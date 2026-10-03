@@ -19,12 +19,15 @@ import os
 import sys
 import getopt
 
+from printrun.utils import install_locale
+install_locale('pronterface')
+
 try:
     import wx  # NOQA
     if wx.VERSION < (4,):
         raise ImportError()
 except:
-    print("wxPython >= 4 is not installed. This program requires wxPython >=4 to run.")
+    print(_("wxPython >= 4 is not installed. This program requires wxPython >=4 to run."))
     raise
 
 from printrun.pronterface import PronterApp
@@ -35,15 +38,7 @@ if __name__ == '__main__':
 
     os.environ['GDK_BACKEND'] = 'x11'
 
-    usage = "Usage:\n"+\
-            "  pronterface [OPTIONS] [FILE]\n\n"+\
-            "Options:\n"+\
-            "  -h, --help\t\t\tPrint this help message and exit\n"+\
-            "  -V, --version\t\t\tPrint program's version number and exit\n"+\
-            "  -v, --verbose\t\t\tIncrease verbosity\n"+\
-            "  -a, --autoconnect\t\tAutomatically try to connect to printer on startup\n"+\
-            "  -c, --conf, --config=CONFIG_FILE\tLoad this file on startup instead of .pronsolerc; you may chain config files, if so settings auto-save will use the last specified file\n"+\
-            "  -e, --execute=COMMAND\t\tExecutes command after configuration/.pronsolerc is loaded; macros/settings from these commands are not autosaved"
+    usage = _("Usage:\n  pronterface [OPTIONS] [FILE]\n\nOptions:\n  -h, --help\t\t\tPrint this help message and exit\n  -V, --version\t\t\tPrint program's version number and exit\n  -v, --verbose\t\t\tIncrease verbosity\n  -a, --autoconnect\t\tAutomatically try to connect to printer on startup\n  -c, --conf, --config=CONFIG_FILE\tLoad this file on startup instead of .pronsolerc; you may chain config files, if so settings auto-save will use the last specified file\n  -e, --execute=COMMAND\t\tExecutes command after configuration/.pronsolerc is loaded; macros/settings from these commands are not autosaved")
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hVvac:e:", ["help", "version", "verbose", "autoconnect", "conf=", "config=", "execute="])

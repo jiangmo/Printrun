@@ -189,7 +189,7 @@ class pronsole(cmd.Cmd):
         self.extra_print_time = 0
         self.silent = False
         self.commandprefixes = 'MGTD$'
-        self.promptstrs = {"offline": "%(bold)soffline>%(normal)s ",
+        self.promptstrs = {"offline": "%(bold)s离线>%(normal)s ",
                            "fallback": "%(bold)s%(red)s%(port)s%(white)s PC>%(normal)s ",
                            "macro": "%(bold)s..>%(normal)s ",
                            "online": "%(bold)s%(green)s%(port)s%(white)s %(extruder_temp_fancy)s%(progress_fancy)s>%(normal)s "}
@@ -218,6 +218,22 @@ class pronsole(cmd.Cmd):
     # We replace this function, defined in cmd.py .
     # It's default behavior with regards to Ctr-C
     # and Ctr-D doesn't make much sense...
+    @property
+    def doc_header(self):
+        return _("Documented commands (type help <topic>):")
+
+    @property
+    def misc_header(self):
+        return _("Miscellaneous help topics:")
+
+    @property
+    def undoc_header(self):
+        return _("Undocumented commands:")
+
+    @property
+    def nohelp(self):
+        return _("*** No help on %s")
+
     def cmdloop(self, intro=None):
         """Repeatedly issue a prompt, accept input, parse an initial prefix
         off the received input, and dispatch to action methods, passing them
@@ -397,9 +413,9 @@ class pronsole(cmd.Cmd):
             return
         else:
             if self.processing_rc:
-                logging.debug(_("Ignored configuration command '{}'" .format(l)))
+                logging.debug(_("Ignored configuration command '{}'").format(l))
             else:
-                self.log(_("Unknown command '{}'".format(l)))
+                self.log(_("Unknown command '{}'").format(l))
 
     def do_exit(self, l):
         if self.p.printing and l != "force":
@@ -524,7 +540,7 @@ Disables all heaters upon exit."))
 
     def do_macro(self, args):
         if args.strip() == "":
-            self.print_topics("User-defined macros", [str(k) for k in self.macros.keys()], 15, 80)
+            self.print_topics(_("User-defined macros"), [str(k) for k in self.macros.keys()], 15, 80)
             return
         arglist = args.split(None, 1)
         macro_name = arglist[0]
@@ -620,7 +636,7 @@ Disables all heaters upon exit."))
         #   rc_file : pathlib.Path
         self.processing_rc = True
         self.rc_file = rc_file.expanduser().resolve()
-        self.log(f"Loading config file '{self.rc_file}'")
+        self.log(_("Loading config file {}").format(self.rc_file))
         try:
             with self.rc_file.open("r", encoding="utf-8") as rc:
                 for rc_cmd in rc:

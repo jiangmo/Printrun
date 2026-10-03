@@ -38,23 +38,42 @@ def set_utf8_locale():
 # Set up Internationalization using gettext
 # searching for installed locales on /usr/share; uses relative folder if not
 # found (windows and macOS)
-def install_locale(domain):
-    shared_locale_dir = os.path.join(DATADIR, 'locale')
-    translation = None
-    lang = locale.getdefaultlocale()
-    osPlatform = platform.system()
+def get_language():
+    """The Chinese edition defaults to Simplified Chinese on every OS."""
+    return os.environ.get('PRINTRUN_LANGUAGE', 'zh_CN').replace('-', '_')
 
-    if osPlatform == "Darwin":
-        # improvised workaround for macOS crash with gettext.translation, see issue #1154
-        gettext.install(domain, './locale')
-    else:
-        if os.path.exists('./locale'):
-            translation = gettext.translation(domain, './locale',
-                                              languages=[lang[0]], fallback= True)
-        else:
-            translation = gettext.translation(domain, shared_locale_dir,
-                                              languages=[lang[0]], fallback= True)
-        translation.install()
+
+def install_locale(domain):
+    # Resolve resources relative to the application, never the working directory.
+    # PyInstaller's one-file executables extract resources into _MEIPASS.
+    roots = [Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parent.parent)),
+             Path(__file__).resolve().parent.parent, Path(DATADIR)]
+    if getattr(sys, 'frozen', False):
+        roots.append(Path(sys.executable).resolve().parent)
+    translation = gettext.NullTranslations()
+    for root in roots:
+        try:
+            translation = gettext.translation(domain, str(root / 'locale'),
+                                              languages=[get_language()])
+            break
+        except FileNotFoundError:
+            continue
+    translation.install()
+    return translation
+
+
+def init_wx_locale():
+    """Keep this object alive for translated wx standard buttons and dialogs."""
+    import wx
+    lang = get_language()
+    info = wx.Locale.FindLanguageInfo(lang)
+    language = info.Language if info else wx.LANGUAGE_ENGLISH_US
+    wx.Locale.AddCatalogLookupPathPrefix(str(Path(wx.__file__).parent / 'locale'))
+    if hasattr(sys, '_MEIPASS'):
+        wx.Locale.AddCatalogLookupPathPrefix(str(Path(sys._MEIPASS) / 'wx' / 'locale'))
+    result = wx.Locale(language)
+    result.AddCatalog('wxstd')
+    return result
 
 class LogFormatter(logging.Formatter):
     def __init__(self, format_default, format_info):
@@ -113,7 +132,7 @@ def imagefile(filename: str, directory: Path = Path()) -> Path:
     possible_img = lookup_file(filename, [directory, "pronterface" / directory])
 
     if isinstance(possible_img, str) or not possible_img.exists():
-        logging.warning('Imagefile "%s" not found.' % filename)
+        logging.warning(_('Imagefile "%s" not found.') % filename)
         return Path()
 
     return possible_img

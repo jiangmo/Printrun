@@ -20,6 +20,8 @@ import re
 import math
 import datetime
 import logging
+from .utils import install_locale
+install_locale('pronterface')
 from array import array
 
 gcode_parsed_args = ["x", "y", "e", "f", "z", "i", "j"]
@@ -61,7 +63,7 @@ try:
     Line = gcoder_line.GLine
     LightLine = gcoder_line.GLightLine
 except Exception as e:
-    logging.warning("Memory-efficient GCoder implementation unavailable: %s" % e)
+    logging.warning(_("Memory-efficient GCoder implementation unavailable: %s") % e)
     Line = PyLine
     LightLine = PyLightLine
 
@@ -84,7 +86,7 @@ def split(line):
     if not split_raw:
         line.command = line.raw
         line.is_move = False
-        logging.warning("raw G-Code line \"%s\" could not be parsed" % line.raw)
+        logging.warning(_("raw G-Code line \"%s\" could not be parsed") % line.raw)
         return [line.raw]
     command = split_raw[0]
     line.command = command[0].upper() + command[1]

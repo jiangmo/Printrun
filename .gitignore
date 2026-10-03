@@ -3,6 +3,7 @@
 *.swp
 *.bak
 *.mo
+!locale/zh_CN/LC_MESSAGES/pronterface.mo
 *.spec
 uploads
 .DS_Store

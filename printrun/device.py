@@ -23,6 +23,8 @@ import time
 
 # Third-party libraries
 import serial
+from .utils import install_locale
+install_locale('pronterface')
 
 READ_EMPTY = b''
 """Constant to represent empty or no data"""
@@ -110,7 +112,7 @@ class Device():
             self._parse_type()
             getattr(self, "_connect_" + self._type)()
         else:
-            raise DeviceError("No port or URL specified")
+            raise DeviceError(_("No port or URL specified"))
 
     def disconnect(self):
         """Terminates the connection to the device."""
@@ -160,7 +162,7 @@ class Device():
         # TODO: silent fail on no device? return timeout?
         if self._device is not None:
             return getattr(self, "_readline_" + self._type)()
-        raise DeviceError("Attempted to read when disconnected")
+        raise DeviceError(_("Attempted to read when disconnected"))
 
     def reset(self):
         """Attempt to reset the connection to the device.
@@ -195,7 +197,7 @@ class Device():
         if self._device is not None:
             getattr(self, "_write_" + self._type)(data)
         else:
-            raise DeviceError("Attempted to write when disconnected")
+            raise DeviceError(_("Attempted to write when disconnected"))
 
     def _parse_type(self):
         # Guess which type of connection is being used
@@ -251,7 +253,7 @@ class Device():
             self._device.open()
 
         except (serial.SerialException, IOError) as e:
-            msg = "Could not connect to serial port '{}'".format(self.port)
+            msg = _("Could not connect to serial port '{}'").format(self.port)
             raise DeviceError(msg, e) from e
 
     def _is_connected_serial(self):
@@ -261,7 +263,7 @@ class Device():
         try:
             self._device.close()
         except serial.SerialException as e:
-            msg = "Error on serial disconnection"
+            msg = _("Error on serial disconnection")
             raise DeviceError(msg, e) from e
 
     def _readline_serial(self):
@@ -269,7 +271,7 @@ class Device():
             # Serial.readline() returns b'' (aka `READ_EMPTY`) on timeout
             return self._device.readline()
         except (serial.SerialException, OSError) as e:
-            msg = f"Unable to read from serial port '{self.port}'"
+            msg = _("Unable to read from serial port '{}'").format(self.port)
             raise DeviceError(msg, e) from e
 
     def _reset_serial(self):
@@ -281,7 +283,7 @@ class Device():
         try:
             self._device.write(data)
         except serial.SerialException as e:
-            msg = f"Unable to write to serial port '{self.port}'"
+            msg = _("Unable to write to serial port '{}'").format(self.port)
             raise DeviceError(msg, e) from e
 
     def _disable_ttyhup(self):
@@ -309,7 +311,7 @@ class Device():
 
         except OSError as e:
             self._disconnect_socket()
-            msg = "Could not connect to {}:{}".format(self._hostname,
+            msg = _("Could not connect to {}:{}").format(self._hostname,
                                                       self._port_number)
             raise DeviceError(msg, e) from e
 
@@ -329,7 +331,7 @@ class Device():
                 self._selector = None
             self._device.close()
         except OSError as e:
-            msg = "Error on socket disconnection"
+            msg = _("Error on socket disconnection")
             raise DeviceError(msg, e) from e
 
     def _readline_socket(self):
@@ -361,7 +363,7 @@ class Device():
                     return READ_EOF
         except OSError as e:
             self._is_connected = False
-            msg = ("Unable to read from {}:{}. Connection lost"
+            msg = (_("Unable to read from {}:{}. Connection lost")
                    ).format(self._hostname, self._port_number)
             raise DeviceError(msg, e) from e
 
@@ -387,7 +389,7 @@ class Device():
                 pass
         except (OSError, RuntimeError) as e:
             self._is_connected = False
-            msg = ("Unable to write to {}:{}. Connection lost"
+            msg = (_("Unable to write to {}:{}. Connection lost")
                    ).format(self._hostname, self._port_number)
             raise DeviceError(msg, e) from e
 

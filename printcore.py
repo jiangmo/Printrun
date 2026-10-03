@@ -32,15 +32,7 @@ if __name__ == '__main__':
 
     from printrun.printcore import __version__ as printcore_version
 
-    usage = "Usage:\n"+\
-            "  printcore [OPTIONS] PORT FILE\n\n"+\
-            "Options:\n"+\
-            "  -b, --baud=BAUD_RATE"+\
-                        "\t\tSet baud rate value. Default value is 115200\n"+\
-            "  -s, --statusreport\t\tPrint progress as percentage\n"+\
-            "  -v, --verbose\t\t\tPrint additional progress information\n"+\
-            "  -V, --version\t\t\tPrint program's version number and exit\n"+\
-            "  -h, --help\t\t\tPrint this help message and exit\n"
+    usage = _("Usage:\n  printcore [OPTIONS] PORT FILE\n\nOptions:\n  -b, --baud=BAUD_RATE\t\tSet baud rate value. Default value is 115200\n  -s, --statusreport\t\tPrint progress as percentage\n  -v, --verbose\t\t\tPrint additional progress information\n  -V, --version\t\t\tPrint program's version number and exit\n  -h, --help\t\t\tPrint this help message and exit\n")
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "b:svVh",
@@ -60,9 +52,9 @@ if __name__ == '__main__':
             try:
                 baud = int(a)
             except ValueError:
-                print("ValueError:")
-                print("\tInvalid BAUD_RATE value '%s'" % a)
-                print("\tBAUD_RATE must be an integer\n")
+                print(_("ValueError:"))
+                print(_("\tInvalid BAUD_RATE value '%s'") % a)
+                print(_("\tBAUD_RATE must be an integer\n"))
                 # FIXME: This should output a more appropriate error message when
                 #        not a good baud rate is passed as an argument
                 #        i.e: when baud <= 1000 or > 225000
@@ -74,13 +66,13 @@ if __name__ == '__main__':
             statusreport = True
 
     if len(args) <= 1:
-        print("Error: Port or gcode file were not specified.\n")
+        print(_("Error: Port or gcode file were not specified.\n"))
         print(usage)
         sys.exit(2)
     elif len(args) > 1:
         port = args[-2]
         filename = args[-1]
-        print("Printing: %s on %s with baudrate %d" % (filename, port, baud))
+        print(_("Printing: %s on %s with baudrate %d") % (filename, port, baud))
 
     p = printcore(port, baud)
     p.loud = loud

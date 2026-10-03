@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Printrun.  If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = "2.2.0"
+__version__ = "2.2.1+zhcn.1"
 
 import sys
 if sys.version_info.major < 3:
-    print("You need to run this on Python 3")
+    print("请使用 Python 3 运行此程序")
     sys.exit(-1)
 
 import threading
@@ -173,8 +173,8 @@ class printcore():
 
     def logError(self, error):
         # TODO[v3]: Remove this function kept for backwards compatibility
-        logging.warning("Function `printcore.printcore.logError` is now deprecated.")
-        logging.warning("`printcore.Callback.error` shall be used instead.")
+        logging.warning(_("Function `printcore.printcore.logError` is now deprecated."))
+        logging.warning(_("`printcore.Callback.error` shall be used instead."))
         self._logError(error)
 
     def _logError(self, error):
@@ -226,7 +226,7 @@ class printcore():
             try:
                 self.printer.connect(self.port, self.baud)
             except device.DeviceError as e:
-                self._logError("Connection error: %s" % e)
+                self._logError(_("Connection error: %s") % e)
                 self.printer = None
                 return
             self._callback('connect')
@@ -251,8 +251,7 @@ class printcore():
         try:
             line_bytes = self.printer.readline()
             if line_bytes is device.READ_EOF:
-                self._logError("Can't read from printer (disconnected?)." +
-                               " line_bytes is None")
+                self._logError(_("Can't read from printer (disconnected?). line_bytes is None"))
                 self.stop_read_thread = True
                 return PR_EOF
             line = line_bytes.decode('utf-8')
@@ -260,16 +259,14 @@ class printcore():
             if len(line) > 1:
                 self.log.append(line)
                 self._callback('recv', line)
-                if self.loud: logging.info("RECV: %s" % line.rstrip())
+                if self.loud: logging.info(_("RECV: %s") % line.rstrip())
             return line
         except UnicodeDecodeError:
-            msg = ("Got rubbish reply from {0} at baudrate {1}:\n"
-                   "Maybe a bad baudrate?").format(self.port, self.baud)
+            msg = _("Got rubbish reply from {0} at baudrate {1}:\nMaybe a bad baudrate?").format(self.port, self.baud)
             self._logError(msg)
             return None
         except device.DeviceError as e:
-            msg = ("Can't read from printer (disconnected?) {0}"
-                   ).format(decode_utf8(str(e)))
+            msg = _("Can't read from printer (disconnected?) {0}").format(decode_utf8(str(e)))
             self._logError(msg)
             return None
 
@@ -652,15 +649,14 @@ class printcore():
                 logging.warning(_("Could not analyze command %s:") % command +
                                 "\n" + traceback.format_exc())
             if self.loud:
-                logging.info("SENT: %s" % command)
+                logging.info(_("SENT: %s") % command)
 
             self._callback('send', command, gline)
             try:
                 self.printer.write((command + "\n").encode('ascii'))
                 self.writefailures = 0
             except device.DeviceError as e:
-                self._logError("Can't write to printer (disconnected?)"
-                              " {0}".format(e))
+                self._logError(_("Can't write to printer (disconnected?) {0}").format(e))
                 self.writefailures += 1
 
     def _callback(self, name, *args):
@@ -680,21 +676,20 @@ class printcore():
                 try:
                     event(*args)
                 except Exception:
-                    logging.error(f"'on_{name}' handler failed with:\n"
-                                  f"{traceback.format_exc()}")
+                    logging.error(_("'on_{}' handler failed with:\n{}").format(name, traceback.format_exc()))
 
         # Invoke the relevant callback function
         # TODO[v3]: Remove code kept for backwards compatibility
         if name == 'hostcommand' and self.process_host_command is not None:
-            logging.warning("Function `printcore.printcore.process_host_command` is now deprecated.")
-            logging.warning("`printcore.Callback.hostcommand` shall be used instead.")
+            logging.warning(_("Function `printcore.printcore.process_host_command` is now deprecated."))
+            logging.warning(_("`printcore.Callback.hostcommand` shall be used instead."))
             callback = self.process_host_command
         elif name == 'printpresend' and self.preprintsendcb is not None:
             callback = self._preprintsend_cb
         elif (hasattr(self, f"{name}cb") and
               ((old_callback := getattr(self, f"{name}cb")) is not None)):
-            logging.warning(f"Function `printcore.printcore.{name}cb` is now deprecated.")
-            logging.warning(f"`printcore.Callback.{name}` shall be used instead.")
+            logging.warning(_("Function `printcore.printcore.{}cb` is now deprecated.").format(name))
+            logging.warning(_("`printcore.Callback.{}` shall be used instead.").format(name))
             callback = old_callback
         else:
             try: callback = getattr(self.callback, f"{name}")
@@ -702,22 +697,20 @@ class printcore():
         try:
             return callback(*args)
         except Exception:
-            logging.error(f"'{name}' callback failed with:\n"
-                          f"{traceback.format_exc()}")
+            logging.error(_("'{}' callback failed with:\n{}").format(name, traceback.format_exc()))
 
     def _preprintsend_event(self, handler, gline, next_gline, index):
         # TODO[v3]: Remove this function kept for backwards compatibility
-        logging.warning("Function `eventhandler.PrinterEventHandler.on_preprintsend` is now deprecated.")
-        logging.warning("`eventhandler.PrinterEventHandler.on_printpresend` shall be used instead.")
+        logging.warning(_("Function `eventhandler.PrinterEventHandler.on_preprintsend` is now deprecated."))
+        logging.warning(_("`eventhandler.PrinterEventHandler.on_printpresend` shall be used instead."))
         try: handler.on_preprintsend(gline, index, self.mainqueue)
         except Exception:
-            logging.error(f"'on_preprintsend' handler failed with:\n"
-                          f"{traceback.format_exc()}")
+            logging.error(_("'on_{}' handler failed with:\n{}").format("preprintsend", traceback.format_exc()))
 
     def _preprintsend_cb(self, gline, next_gline, index):
         # TODO[v3]: Remove this function kept for backwards compatibility
-        logging.warning("Function `printcore.printcore.preprintsendcb` is now deprecated.")
-        logging.warning("`printcore.Callback.printpresend` shall be used instead.")
+        logging.warning(_("Function `printcore.printcore.preprintsendcb` is now deprecated."))
+        logging.warning(_("`printcore.Callback.printpresend` shall be used instead."))
         return self.preprintsendcb(gline, next_gline)
 
 

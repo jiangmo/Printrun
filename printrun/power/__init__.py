@@ -1,3 +1,5 @@
+from printrun.utils import install_locale
+install_locale("pronterface")
 # This file is part of the Printrun suite.
 #
 # Printrun is free software: you can redistribute it and/or modify
@@ -72,7 +74,7 @@ else:
             inhibit_sleep_handler.UnInhibit(inhibit_sleep_token)
             inhibit_sleep_token = None
     except Exception as e:
-        logging.warning("Could not setup DBus for sleep inhibition: %s" % e)
+        logging.warning(_("Could not setup DBus for sleep inhibition: %s") % e)
 
         def inhibit_sleep(reason):
             return
@@ -139,7 +141,7 @@ try:
         reset_priority()
         deinhibit_sleep()
 except ImportError as e:
-    logging.warning("psutil unavailable, could not import power utils:" + str(e))
+    logging.warning(_("psutil unavailable, could not import power utils:") + str(e))
 
     def powerset_print_start(reason):
         pass

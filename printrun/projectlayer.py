@@ -113,7 +113,7 @@ class DisplayFrame(wx.Frame):
 
             svg_image = wx.svg.SVGimage.CreateFromBytes(ET.tostring(image), units = 'px', dpi = self.dpi)
 
-            self.status(f"Scaled width: {svg_image.width / self.dpi * 25.4 * self.scale:.2f} mm @ {round(svg_image.width * self.scale)} px")
+            self.status(_("Scaled width: {:.2f} mm @ {} px").format(svg_image.width / self.dpi * 25.4 * self.scale, round(svg_image.width * self.scale)))
 
             gc.Translate(self.convert_mm_to_px(self.offset[0]), self.convert_mm_to_px(self.offset[1]))
             gc.Scale(self.scale, self.scale)
@@ -130,7 +130,7 @@ class DisplayFrame(wx.Frame):
             real_width = max(width, height)
             bitmap = gc.CreateBitmapFromImage(image)
 
-            self.status(f"Scaled width: {real_width / self.dpi * 25.4 * self.scale:.2f} mm @ {round(real_width * self.scale)} px")
+            self.status(_("Scaled width: {:.2f} mm @ {} px").format(real_width / self.dpi * 25.4 * self.scale, round(real_width * self.scale)))
 
             gc.Translate(self.convert_mm_to_px(self.offset[0]), self.convert_mm_to_px(self.offset[1]))
             gc.Scale(self.scale, self.scale)

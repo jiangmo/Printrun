@@ -168,7 +168,7 @@ class Graph(BufferedCanvas):
         if not self.timer.IsRunning():
             font = wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.BOLD)
             gc.SetFont(font, wx.Colour(3, 4, 4))
-            gc.DrawText("Graph offline",
+            gc.DrawText(_("Graph offline"),
                         self.width / 2 - font.GetPointSize() * 3,
                         self.height / 2 - font.GetPointSize() * 1)
 
@@ -297,31 +297,31 @@ class Graph(BufferedCanvas):
 
     def drawfanpower(self, dc, gc):
         self.drawtemperature(dc, gc, self.fanpowers,
-                             "Fan", 1, self.root.settings.graph_color_fan)
+                             _("Fan"), 1, self.root.settings.graph_color_fan)
 
     def drawbedtemp(self, dc, gc):
         self.drawtemperature(dc, gc, self.bedtemps,
-                             "Bed", 2, self.root.settings.graph_color_bedtemp)
+                             _("Bed"), 2, self.root.settings.graph_color_bedtemp)
 
     def drawbedtargettemp(self, dc, gc):
         self.drawtemperature(dc, gc, self.bedtargettemps,
-                             "Bed Target", 2, self.root.settings.graph_color_bedtarget)
+                             _("Bed Target"), 2, self.root.settings.graph_color_bedtarget)
 
     def drawextruder0temp(self, dc, gc):
         self.drawtemperature(dc, gc, self.extruder0temps,
-                             "Ex0", 1, self.root.settings.graph_color_ex0temp)
+                             _("Ex0"), 1, self.root.settings.graph_color_ex0temp)
 
     def drawextruder0targettemp(self, dc, gc):
         self.drawtemperature(dc, gc, self.extruder0targettemps,
-                             "Ex0 Target", 2, self.root.settings.graph_color_ex0target)
+                             _("Ex0 Target"), 2, self.root.settings.graph_color_ex0target)
 
     def drawextruder1temp(self, dc, gc):
         self.drawtemperature(dc, gc, self.extruder1temps,
-                             "Ex1", 3, self.root.settings.graph_color_ex1temp)
+                             _("Ex1"), 3, self.root.settings.graph_color_ex1temp)
 
     def drawextruder1targettemp(self, dc, gc):
         self.drawtemperature(dc, gc, self.extruder1targettemps,
-                             "Ex1 Target", 2, self.root.settings.graph_color_ex1target)
+                             _("Ex1 Target"), 2, self.root.settings.graph_color_ex1target)
 
     def SetFanPower(self, value):
         self.fanpowers.pop()
