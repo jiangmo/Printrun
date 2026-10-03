@@ -1,12 +1,13 @@
 import builtins
 import gettext
+import io
 import os
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from printrun.utils import get_language, install_locale
+from printrun.utils import configure_console_encoding, get_language, install_locale
 
 
 class LocalizationTests(unittest.TestCase):
@@ -35,6 +36,15 @@ class LocalizationTests(unittest.TestCase):
             translation = install_locale('pronterface')
             self.assertIsInstance(translation, gettext.GNUTranslations)
             self.assertEqual(translation.gettext('Connect to the printer'), '连接打印机')
+
+    def test_redirected_english_windows_console(self):
+        buffer = io.BytesIO()
+        stream = io.TextIOWrapper(buffer, encoding='cp1252')
+        with patch('sys.stdout', stream), patch('sys.stdin', None), patch('sys.stderr', None):
+            configure_console_encoding()
+            print('用法：加载文件')
+            stream.flush()
+        self.assertEqual(buffer.getvalue().decode('utf-8'), '用法：加载文件\n')
 
 
 if __name__ == '__main__':

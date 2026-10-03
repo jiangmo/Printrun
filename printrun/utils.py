@@ -29,6 +29,17 @@ from typing import Union
 DATADIR = os.path.join(sys.prefix, 'share')
 
 
+def configure_console_encoding():
+    """Frozen apps ignore PYTHONUTF8; redirected Windows streams may be cp1252."""
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if stream is not None and hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
+
+
+if getattr(sys, 'frozen', False) and sys.platform == 'win32':
+    configure_console_encoding()
+
+
 def set_utf8_locale():
     """Make sure we read/write all text files in UTF-8"""
     lang, encoding = locale.getlocale()
