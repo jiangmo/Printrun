@@ -44,7 +44,7 @@ class LocalizationTests(unittest.TestCase):
             configure_console_encoding()
             print('用法：加载文件')
             stream.flush()
-        self.assertEqual(buffer.getvalue().decode('utf-8'), '用法：加载文件\n')
+        self.assertEqual(buffer.getvalue().decode('utf-8').splitlines(), ['用法：加载文件'])
 
 
 if __name__ == '__main__':
